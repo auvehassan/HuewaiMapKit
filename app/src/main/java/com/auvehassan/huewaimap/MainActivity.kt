@@ -1,12 +1,13 @@
 package com.auvehassan.huewaimap
 
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
+import com.huawei.hms.maps.*
+import com.huawei.hms.maps.model.BitmapDescriptorFactory
+import com.huawei.hms.maps.model.LatLng
+import com.huawei.hms.maps.model.MarkerOptions
+import com.revesoft.material.R
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -23,8 +24,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate:")
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        mMapView = findViewById<com.huawei.hms.maps.MapView>(R.id.mapView)
+
+        // Please replace Your API key with the API key in
+        // agconnect-services.json.
+        MapsInitializer.setApiKey("API_KEY") // todo move to resource
+        MapsInitializer.initialize(this)
+        setContentView(R.layout.activity_huewai_map)
+        mMapView = findViewById(R.id.mapView)
         var mapViewBundle: Bundle? = null
         if (savedInstanceState != null) {
             mapViewBundle =
@@ -32,8 +38,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         mMapView?.apply {
             onCreate(mapViewBundle)
-            getMapAsync(this)
+            getMapAsync(this@HuewaiMapActivity)
         }
+
+        initMarkers()
     }
 
     override fun onMapReady(map: HuaweiMap) {
@@ -66,16 +74,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mMapView?.onResume()
     }
 
-    private fun hasPermissions(context: Context, vararg permissions: String): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            for (permission in permissions) {
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false
-                }
-            }
-        }
-        return true
-    }
+//    private fun hasPermissions(context: Context, vararg permissions: String): Boolean {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            for (permission in permissions) {
+//                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+//                    return false
+//                }
+//            }
+//        }
+//        return true
+//    }
 
 
     /**
@@ -95,7 +103,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
 
-        hMap?.setInfoWindowAdapter(CustomInfoViewAdapter(this))
+//        hMap?.setInfoWindowAdapter(CustomInfoViewAdapter(this))
 
     }
 
@@ -107,8 +115,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 .position(latLng)
                 .title("$index Market Title")
                 .snippet("$index snippet!")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                .clusterable(true) // Make it clusterable
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.send_location))
+//                .clusterable(true) // Make it clusterable
             markerOptions.add(options)
         }
         return markerOptions
@@ -131,4 +139,3 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         return list
     }
 }
-
